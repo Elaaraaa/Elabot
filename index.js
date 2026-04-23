@@ -34,6 +34,8 @@ Réponds en français sauf si on te parle dans une autre langue.`;
 async function saveToNotion(userId, channelId, messages) {
   const pageId = process.env.NOTION_PAGE_ID;
   const date = new Date().toLocaleDateString("fr-FR");
+const userInfo = await slackApp.client.users.info({ user: userId });
+  const userName = userInfo.user.real_name || userInfo.user.name;
   const content = messages
     .map((m) => `${m.role === "user" ? "👤" : "🧚 Elabot"}: ${m.content}`)
     .join("\n\n");
@@ -42,7 +44,7 @@ async function saveToNotion(userId, channelId, messages) {
     parent: { page_id: pageId },
     properties: {
       title: {
-        title: [{ text: { content: `content: `${userName} — ${date}` } }],
+        title: [{ text: {content: `${userName} — ${date}`,
       },
     },
     children: [
