@@ -1,0 +1,33 @@
+async function saveToNotion(userId, channelId, messages) {
+  const pageId = process.env.NOTION_PAGE_ID;
+  const date = new Date().toLocaleDateString("fr-FR");
+  
+  // Récupère le vrai nom de l'utilisateur Slack
+  const userInfo = await slackApp.client.users.info({ user: userId });
+  const userName = userInfo.user.real_name || userInfo.user.name;
+  
+  const content = messages
+    .map((m) => `${m.role === "user" ? "👤" : "🧚 Elabot"}: ${m.content}`)
+    .join("\n\n");
+
+  await notion.pages.create({
+    parent: { page_id: pageId },
+    properties: {
+      title: {
+        title: [{ text: { content: `${userName} — ${date}` } }],
+      },
+    },
+    children: [
+      {
+        object: "block",
+        type: "heading_2",
+        heading_2: { rich_text: [{ text: { content: `📅 ${date} · ${userName}` } }] },
+      },
+      {
+        object: "block",
+        type: "paragraph",
+        paragraph: { rich_text: [{ text: { content: content } }] },
+      },
+    ],
+  });
+}

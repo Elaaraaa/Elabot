@@ -42,7 +42,7 @@ async function saveToNotion(userId, channelId, messages) {
     parent: { page_id: pageId },
     properties: {
       title: {
-        title: [{ text: { content: `Conversation Slack — ${date}` } }],
+        title: [{ text: { content: `content: `${userName} — ${date}` } }],
       },
     },
     children: [
